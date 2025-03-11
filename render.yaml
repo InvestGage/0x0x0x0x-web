@@ -6,42 +6,45 @@ services:
   disk:
     name: ghost
     mountPath: /var/lib/ghost/content
-    sizeGB: 10 #Feel free to change this to suit your needs.
+    sizeGB: 10 # Feel free to change this to suit your needs.
   envVars:
     - key: database__client
-      value: mysql
+      value: pg
     - key: database__connection__host
       fromService:
         type: pserv
-        name: mysql
+        name: postgresql
         property: host
     - key: database__connection__database
-      value: ghostdb
+      fromService:
+        type: pserv
+        name: postgresql
+        property: database
     - key: database__connection__user
-      value: mysql
+      fromService:
+        type: pserv
+        name: postgresql
+        property: user
     - key: database__connection__password
       fromService:
         type: pserv
-        name: mysql
-        envVarKey: MYSQL_PASSWORD
+        name: postgresql
+        property: password
 
 - type: pserv
-  name: mysql
-  plan: standard
+  name: postgresql
+  plan: free
   env: docker
-  repo: https://github.com/render-examples/mysql
+  repo: https://github.com/render-examples/postgres
   autoDeploy: false
   disk:
-    name: mysql
-    mountPath: /var/lib/mysql
-    sizeGB: 10
+    name: postgresql
+    mountPath: /var/lib/postgresql/data
+    sizeGB: 1
   envVars:
-    - key: MYSQL_DATABASE
+    - key: POSTGRES_DB
       value: ghostdb
-    - key: MYSQL_USER
-      value: mysql
-    - key: MYSQL_PASSWORD
+    - key: POSTGRES_USER
+      value: ghostuser
+    - key: POSTGRES_PASSWORD
       generateValue: true
-    - key: MYSQL_ROOT_PASSWORD
-      generateValue: true
-
