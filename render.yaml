@@ -6,45 +6,39 @@ services:
   disk:
     name: ghost
     mountPath: /var/lib/ghost/content
-    sizeGB: 10 # Feel free to change this to suit your needs.
+    sizeGB: 10
   envVars:
     - key: database__client
       value: pg
     - key: database__connection__host
       fromService:
         type: pserv
-        name: postgresql
+        name: postgres
         property: host
     - key: database__connection__database
-      fromService:
-        type: pserv
-        name: postgresql
-        property: database
+      value: ghostdb
     - key: database__connection__user
-      fromService:
-        type: pserv
-        name: postgresql
-        property: user
+      value: postgres
     - key: database__connection__password
       fromService:
         type: pserv
-        name: postgresql
-        property: password
+        name: postgres
+        envVarKey: POSTGRES_PASSWORD
 
 - type: pserv
-  name: postgresql
+  name: postgres
   plan: free
   env: docker
   repo: https://github.com/render-examples/postgres
   autoDeploy: false
   disk:
-    name: postgresql
+    name: postgres
     mountPath: /var/lib/postgresql/data
     sizeGB: 1
   envVars:
     - key: POSTGRES_DB
       value: ghostdb
     - key: POSTGRES_USER
-      value: ghostuser
+      value: postgres
     - key: POSTGRES_PASSWORD
       generateValue: true
